@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jsarda <jsarda@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 14:21:07 by jsarda            #+#    #+#             */
-/*   Updated: 2023/12/01 19:52:24 by jsarda           ###   ########.fr       */
+/*   Updated: 2023/12/01 19:49:23 by jsarda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*remaining(char *stash)
 {
@@ -99,19 +99,21 @@ char	*read_file(char *stash, int fd)
 
 char	*get_next_line(int fd)
 {
-	static char	*stash;
+	static char	*stash[1024] = {NULL};
 	char		*line;
 
 	if (BUFFER_SIZE <= 0 || fd < 0 || read(fd, 0, 0))
 		return (NULL);
-	if (!stash)
-		stash = ft_strdup("");
-	stash = read_file(stash, fd);
-	if (!stash)
+	if (fd > 1024)
 		return (NULL);
-	line = get_line(stash);
-	stash = remaining(stash);
+	if (!stash[fd])
+		stash[fd] = ft_strdup("");
+	stash[fd] = read_file(stash[fd], fd);
+	if (!stash[fd])
+		return (NULL);
+	line = get_line(stash[fd]);
+	stash[fd] = remaining(stash[fd]);
 	if (!line)
-		return (free(stash), NULL);
+		return (free(stash[fd]), NULL);
 	return (line);
 }
